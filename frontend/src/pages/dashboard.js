@@ -10,19 +10,29 @@ function Dashboard() {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
     const checkAccess = async () => {
       try {
         const res = await fetch("http://localhost:5000/api/protected", {
           headers: { Authorization: `Bearer ${token}` }
         });
         const data = await res.json();
-        setProtectedMsg(data.message);
+
+        if (res.ok) {
+          setProtectedMsg(data.message || "Access granted");
+        } else {
+          setProtectedMsg(data.message || "Access denied");
+        }
       } catch (error) {
         setProtectedMsg("Error accessing protected route");
       }
     };
     checkAccess();
-  }, [token]);
+  }, [token, navigate]);
 
   const updateProfile = async () => {
     const res = await fetch("http://localhost:5000/api/auth/update", {
