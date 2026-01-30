@@ -8,10 +8,23 @@ function Login() {
 	const navigate = useNavigate();
 
 	const loginUser = async () => {
+		const normalizedEmail = email.trim().toLowerCase();
+
+		if (!normalizedEmail || !password) {
+			setMsg("Email and password are required");
+			return;
+		}
+
+		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+		if (!emailRegex.test(normalizedEmail)) {
+			setMsg("Enter a single valid email");
+			return;
+		}
+
 		const res = await fetch("http://localhost:5000/api/auth/login", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ email, password })
+			body: JSON.stringify({ email: normalizedEmail, password })
 		});
 
 		const data = await res.json();

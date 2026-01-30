@@ -22,10 +22,23 @@ function Forgot() {
   }, [timer, step]);
 
   const requestOtp = async () => {
+    const normalizedEmail = email.trim().toLowerCase();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!normalizedEmail) {
+      setMsg("Email is required");
+      return;
+    }
+
+    if (!emailRegex.test(normalizedEmail)) {
+      setMsg("Enter a single valid email");
+      return;
+    }
+
     const res = await fetch("http://localhost:5000/api/auth/forgot-password", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email })
+      body: JSON.stringify({ email: normalizedEmail })
     });
 
     const data = await res.json();
@@ -39,10 +52,23 @@ function Forgot() {
   };
 
   const resendOtp = async () => {
+    const normalizedEmail = email.trim().toLowerCase();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!normalizedEmail) {
+      setMsg("Email is required");
+      return;
+    }
+
+    if (!emailRegex.test(normalizedEmail)) {
+      setMsg("Enter a single valid email");
+      return;
+    }
+
     const res = await fetch("http://localhost:5000/api/auth/forgot-password", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email })
+      body: JSON.stringify({ email: normalizedEmail })
     });
 
     const data = await res.json();
@@ -55,10 +81,17 @@ function Forgot() {
   };
 
   const verifyOtp = async () => {
+    const normalizedEmail = email.trim().toLowerCase();
+
+    if (!normalizedEmail || !otp) {
+      setMsg("Email and OTP are required");
+      return;
+    }
+
     const res = await fetch("http://localhost:5000/api/auth/verify-otp", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, otp })
+      body: JSON.stringify({ email: normalizedEmail, otp })
     });
 
     const data = await res.json();
@@ -70,10 +103,17 @@ function Forgot() {
   };
 
   const resetPassword = async () => {
+    const normalizedEmail = email.trim().toLowerCase();
+
+    if (!normalizedEmail || !otp || !newPassword) {
+      setMsg("Email, OTP, and new password are required");
+      return;
+    }
+
     const res = await fetch("http://localhost:5000/api/auth/reset-password", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, otp, newPassword })
+      body: JSON.stringify({ email: normalizedEmail, otp, newPassword })
     });
 
     const data = await res.json();

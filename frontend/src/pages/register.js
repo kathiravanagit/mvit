@@ -23,13 +23,15 @@ function Register() {
   };
 
   const registerUser = async () => {
-    if (!name || !email || !password) {
+    const normalizedEmail = email.trim().toLowerCase();
+
+    if (!name || !normalizedEmail || !password) {
       setMsg("All fields are required");
       return;
     }
 
-    if (!isValidEmail(email)) {
-      setMsg("Invalid email format");
+    if (!isValidEmail(normalizedEmail)) {
+      setMsg("Enter a single valid email");
       return;
     }
 
@@ -41,7 +43,7 @@ function Register() {
     const res = await fetch("http://localhost:5000/api/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password })
+      body: JSON.stringify({ name, email: normalizedEmail, password })
     });
 
     const data = await res.json();

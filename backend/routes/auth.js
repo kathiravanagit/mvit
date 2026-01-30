@@ -8,6 +8,10 @@ const User = require("../models/User");
 const router = express.Router();
 
 // Validation helpers
+const normalizeEmail = (email = "") => email.trim().toLowerCase();
+
+const isSingleEmail = (email) => !/[\s,;]/.test(email);
+
 const isValidEmail = (email) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
@@ -51,13 +55,14 @@ const sendResetOtp = async (to, otp) => {
 router.post("/register", async (req, res) => {
   try {
     const { name, email, password } = req.body;
+    const normalizedEmail = normalizeEmail(email);
 
     if (!name || !email || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    if (!isValidEmail(email)) {
-      return res.status(400).json({ message: "Invalid email format" });
+    if (!isSingleEmail(normalizedEmail) || !isValidEmail(normalizedEmail)) {
+      return res.status(400).json({ message: "Enter a single valid email" });
     }
 
     if (!isStrongPassword(password)) {
@@ -66,7 +71,7 @@ router.post("/register", async (req, res) => {
       });
     }
 
-    const userExists = await User.findOne({ email });
+    const userExists = await User.findOne({ email: normalizedEmail });
     if (userExists) {
       return res.status(400).json({ message: "User already exists" });
     }
@@ -76,7 +81,7 @@ router.post("/register", async (req, res) => {
 
     const user = new User({
       name,
-      email,
+      email: normalizedEmail,
       password: hashedPassword
     });
 
@@ -93,12 +98,13 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
+    const normalizedEmail = normalizeEmail(email);
 
-    if (!isValidEmail(email)) {
-      return res.status(400).json({ message: "Invalid email format" });
+    if (!isSingleEmail(normalizedEmail) || !isValidEmail(normalizedEmail)) {
+      return res.status(400).json({ message: "Enter a single valid email" });
     }
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: normalizedEmail });
     if (!user) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
@@ -125,12 +131,17 @@ router.post("/login", async (req, res) => {
 router.post("/forgot-password", async (req, res) => {
   try {
     const { email } = req.body;
+    const normalizedEmail = normalizeEmail(email);
 
     if (!email) {
       return res.status(400).json({ message: "Email is required" });
     }
 
-    const user = await User.findOne({ email });
+    if (!isSingleEmail(normalizedEmail) || !isValidEmail(normalizedEmail)) {
+      return res.status(400).json({ message: "Enter a single valid email" });
+    }
+
+    const user = await User.findOne({ email: normalizedEmail });
 
     if (user) {
       const otp = Math.floor(100000 + Math.random() * 900000).toString();
@@ -140,7 +151,7 @@ router.post("/forgot-password", async (req, res) => {
       user.resetOtpExpires = new Date(Date.now() + 10 * 60 * 1000);
       await user.save();
 
-      await sendResetOtp(email, otp);
+      await sendResetOtp(normalizedEmail, otp);
     }
 
     res.json({ message: "If the account exists, an OTP was sent." });
@@ -154,12 +165,17 @@ router.post("/forgot-password", async (req, res) => {
 router.post("/verify-otp", async (req, res) => {
   try {
     const { email, otp } = req.body;
+    const normalizedEmail = normalizeEmail(email);
 
     if (!email || !otp) {
       return res.status(400).json({ message: "Email and OTP are required" });
     }
 
-    const user = await User.findOne({ email });
+    if (!isSingleEmail(normalizedEmail) || !isValidEmail(normalizedEmail)) {
+      return res.status(400).json({ message: "Enter a single valid email" });
+    }
+
+    const user = await User.findOne({ email: normalizedEmail });
     if (!user || !user.resetOtpHash || !user.resetOtpExpires) {
       return res.status(400).json({ message: "Invalid OTP" });
     }
@@ -183,6 +199,7 @@ router.post("/verify-otp", async (req, res) => {
 router.post("/reset-password", async (req, res) => {
   try {
     const { email, otp, newPassword } = req.body;
+    const normalizedEmail = normalizeEmail(email);
 
     if (!email || !otp || !newPassword) {
       return res
@@ -190,7 +207,11 @@ router.post("/reset-password", async (req, res) => {
         .json({ message: "Email, OTP, and new password are required" });
     }
 
-    const user = await User.findOne({ email });
+    if (!isSingleEmail(normalizedEmail) || !isValidEmail(normalizedEmail)) {
+      return res.status(400).json({ message: "Enter a single valid email" });
+    }
+
+    const user = await User.findOne({ email: normalizedEmail });
     if (!user || !user.resetOtpHash || !user.resetOtpExpires) {
       return res.status(400).json({ message: "Invalid OTP" });
     }

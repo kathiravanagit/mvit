@@ -13,7 +13,7 @@ function Dashboard() {
     const checkAccess = async () => {
       try {
         const res = await fetch("http://localhost:5000/api/protected", {
-          headers: { Authorization: token }
+          headers: { Authorization: `Bearer ${token}` }
         });
         const data = await res.json();
         setProtectedMsg(data.message);
@@ -29,7 +29,7 @@ function Dashboard() {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        Authorization: token
+        Authorization: `Bearer ${token}`
       },
       body: JSON.stringify({ name, email })
     });
@@ -41,7 +41,7 @@ function Dashboard() {
   const deleteAccount = async () => {
     const res = await fetch("http://localhost:5000/api/auth/delete", {
       method: "DELETE",
-      headers: { Authorization: token }
+      headers: { Authorization: `Bearer ${token}` }
     });
 
     const data = await res.json();
