@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 function Forgot() {
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
