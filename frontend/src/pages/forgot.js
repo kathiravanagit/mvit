@@ -35,7 +35,8 @@ function Forgot() {
       return;
     }
 
-    const res = await fetch("http://localhost:5000/api/auth/forgot-password", {
+    const API_URL = process.env.REACT_APP_API_URL;
+    const res = await fetch(`${API_URL}/api/auth/forgot-password`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email: normalizedEmail })
@@ -65,7 +66,7 @@ function Forgot() {
       return;
     }
 
-    const res = await fetch("http://localhost:5000/api/auth/forgot-password", {
+    const res = await fetch(`${API_URL}/api/auth/forgot-password`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email: normalizedEmail })
@@ -88,7 +89,7 @@ function Forgot() {
       return;
     }
 
-    const res = await fetch("http://localhost:5000/api/auth/verify-otp", {
+    const res = await fetch(`${API_URL}/api/auth/verify-otp`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email: normalizedEmail, otp })
@@ -110,7 +111,7 @@ function Forgot() {
       return;
     }
 
-    const res = await fetch("http://localhost:5000/api/auth/reset-password", {
+    const res = await fetch(`${API_URL}/api/auth/reset-password`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email: normalizedEmail, otp, newPassword })

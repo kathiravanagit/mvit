@@ -17,7 +17,8 @@ function Dashboard() {
 
     const checkAccess = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/protected", {
+        const API_URL = process.env.REACT_APP_API_URL;
+        const res = await fetch(`${API_URL}/api/protected`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         const data = await res.json();
@@ -35,7 +36,7 @@ function Dashboard() {
   }, [token, navigate]);
 
   const updateProfile = async () => {
-    const res = await fetch("http://localhost:5000/api/auth/update", {
+    const res = await fetch(`${API_URL}/api/auth/update`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -49,7 +50,7 @@ function Dashboard() {
   };
 
   const deleteAccount = async () => {
-    const res = await fetch("http://localhost:5000/api/auth/delete", {
+    const res = await fetch(`${API_URL}/api/auth/delete`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` }
     });
