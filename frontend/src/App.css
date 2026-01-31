@@ -5,7 +5,7 @@
 body {
   margin: 0;
   background: radial-gradient(circle at top, #eef2ff 0%, #f7f9fc 45%, #ffffff 100%);
-  color: #0f172a;
+  color: #020202;
 }
 
 a {
@@ -47,7 +47,7 @@ a {
 
 .nav a:hover {
   background: #e2e8f0;
-  color: #0f172a;
+  color: #0c0c0d;
 }
 
 .main {
@@ -68,7 +68,7 @@ a {
   border-radius: 18px;
   padding: 28px;
   box-shadow: 0 20px 45px rgba(15, 23, 42, 0.08);
-  border: 1px solid rgba(148, 163, 184, 0.2);
+  border: 1px solid rgba(72, 73, 76, 0.2);
 }
 
 .card.soft {
@@ -144,17 +144,17 @@ h3 {
 .button.primary {
   background: linear-gradient(120deg, #6366f1, #8b5cf6);
   color: white;
-  box-shadow: 0 12px 20px rgba(99, 102, 241, 0.25);
+  box-shadow: 0 12px 20px rgba(0, 0, 3, 0.25);
 }
 
 .button.ghost {
   background: transparent;
-  color: #334155;
+  color: #07080a;
   border: 1px solid #cbd5f5;
 }
 
 .button.danger {
-  background: #ef4444;
+  background: #44ef66;
   color: white;
 }
 

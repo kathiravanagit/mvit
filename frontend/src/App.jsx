@@ -3,6 +3,7 @@ import Register from "./pages/register";
 import Login from "./pages/login";
 import Dashboard from "./pages/dashboard";
 import Forgot from "./pages/forgot";
+import ConfirmEmail from "./pages/confirmEmail";
 import "./App.css";
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
           path="/dashboard"
           element={isLoggedIn ? <Dashboard /> : <Navigate to="/login" />}
         />
+        <Route path="/confirm-email" element={<ConfirmEmail />} />
       </Routes>
     </BrowserRouter>
   );

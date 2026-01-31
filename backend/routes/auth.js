@@ -1,3 +1,20 @@
+// ...existing code...
+// 1. imports
+const express = require("express");
+const router = express.Router();
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
+const nodemailer = require("nodemailer");
+const User = require("../models/User");
+// ...existing code...
+
+// 2. helpers (email, password validation, mailer)
+
+// 3. routes
+module.exports = router;
+;
+
 // EMAIL CONFIRMATION ROUTE
 router.get("/confirm-email", async (req, res) => {
   try {
@@ -18,14 +35,6 @@ router.get("/confirm-email", async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
-const express = require("express");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const crypto = require("crypto");
-const nodemailer = require("nodemailer");
-const User = require("../models/User");
-
-const router = express.Router();
 
 // Validation helpers
 const normalizeEmail = (email = "") => email.trim().toLowerCase();
