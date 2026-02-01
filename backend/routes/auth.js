@@ -1,13 +1,10 @@
-// ...existing code...
-// 1. imports
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
-const nodemailer = require("nodemailer");
+const axios = require("axios");
 const User = require("../models/User");
-// ...existing code...
 
 // 2. helpers (email, password validation, mailer)
 
@@ -55,70 +52,48 @@ const isStrongPassword = (password) => {
   return hasMinLength && hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar;
 };
 
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
+// Brevo Email Service
+const sendBrevoEmail = async (to, subject, htmlContent) => {
+  if (!process.env.BREVO_API_KEY) {
+    throw new Error("Brevo API key not configured");
   }
-});
-
-transporter.verify((error) => {
-  if (error) {
-    console.log("EMAIL CONFIG ERROR:", error.message);
-  } else {
-    console.log("Email service ready");
-  }
-});
-
-const sendResetOtp = async (to, otp) => {
-  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-    throw new Error("Email service not configured");
-  }
-
-  const from = process.env.EMAIL_FROM || process.env.EMAIL_USER;
+  
   try {
-    const info = await transporter.sendMail({
-      from,
-      to,
-      subject: "Your password reset OTP",
-      text: `Your OTP is ${otp}. It expires in 10 minutes.`,
-      html: `<p>Your OTP is <strong>${otp}</strong>. It expires in 10 minutes.</p>`
-    });
-    console.log("OTP EMAIL SENT:", {
-      messageId: info.messageId,
-      accepted: info.accepted,
-      rejected: info.rejected,
-      response: info.response
-    });
+    const response = await axios.post(
+      "https://api.brevo.com/v3/smtp/email",
+      {
+        to: [{ email: to }],
+        sender: { email: process.env.EMAIL_USER, name: "AuthKit" },
+        subject: subject,
+        htmlContent: htmlContent
+      },
+      {
+        headers: {
+          "api-key": process.env.BREVO_API_KEY,
+          "Content-Type": "application/json"
+        }
+      }
+    );
+    console.log("EMAIL SENT via Brevo:", response.data);
+    return response.data;
   } catch (error) {
-    console.log("TRANSPORTER ERROR:", error.message);
+    console.log("BREVO EMAIL ERROR:", error.response?.data || error.message);
     throw error;
   }
 };
 
+const sendResetOtp = async (to, otp) => {
+  const subject = "Your password reset OTP";
+  const htmlContent = `<p>Your OTP is <strong>${otp}</strong>. It expires in 10 minutes.</p>`;
+  return sendBrevoEmail(to, subject, htmlContent);
+};
+
 // Helper to send confirmation email
 const sendConfirmationEmail = async (to, token) => {
-  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-    throw new Error("Email service not configured");
-  }
-  const from = process.env.EMAIL_FROM || process.env.EMAIL_USER;
   const confirmUrl = `${process.env.FRONTEND_URL || "http://localhost:3000"}/confirm-email?token=${token}`;
-  try {
-    const info = await transporter.sendMail({
-      from,
-      to,
-      subject: "AuthKit Confirmation",
-      text: `Please confirm your email by clicking the following link: ${confirmUrl}`,
-      html: `<p>Please confirm your email by clicking <a href="${confirmUrl}">here</a>.</p>`
-    });
-    console.log("CONFIRM EMAIL SENT:", info);
-  } catch (error) {
-    console.log("CONFIRM EMAIL ERROR:", error.message);
-    throw error;
-  }
+  const subject = "AuthKit Confirmation";
+  const htmlContent = `<p>Please confirm your email by clicking <a href="${confirmUrl}">here</a>.</p>`;
+  return sendBrevoEmail(to, subject, htmlContent);
 };
 
 // REGISTER ROUTE
