@@ -1,137 +1,103 @@
-# User Authentication System (MERN Stack)
+# User Authentication System - MERN Stack
 
-## Project Description
+A secure, full-stack authentication system built with MongoDB, Express, React, and Node.js featuring JWT-based authentication, bcrypt password encryption, and protected routes.
 
-This project is a full-stack User Authentication System developed using the MERN stack.
-It allows users to register, log in securely, and access a protected page after authentication.
-Passwords are encrypted using bcrypt before storing them in MongoDB, and JWT is used for secure authorization.
+## Tech Stack
 
-The main objective of this project is to demonstrate user authentication and authorization in a MERN stack application.
-
----
-
-## Technologies Used
-
-* React JS (Frontend)
-* UI Components: shadcn/ui (Radix UI + Tailwind CSS)
-* Node.js
-* Express.js
-* MongoDB Atlas
-* Mongoose
-* bcrypt (Password Encryption)
-* JSON Web Token (JWT)
-
----
+**Frontend:** React, React Router, Axios, Tailwind CSS, shadcn/ui  
+**Backend:** Node.js, Express.js, MongoDB, Mongoose, bcrypt, JWT
 
 ## Features
 
-* User Registration
-* User Login
-* Password Encryption using bcrypt
-* JWT-based Authentication
-* Protected Route (Access Granted after login)
-* Update User Profile
-* Delete User Account
-* Basic Frontend Form Validation
-
----
+- User registration and login with JWT authentication
+- Password encryption with bcrypt
+- Protected routes and user profile management
+- Email confirmation and password reset
+- Form validation and error handling  
 
 ## Project Structure
 
 ```
-frontend/   → React frontend  
-backend/    → Node.js & Express backend  
+user-authentication/
+├── frontend/          # React application
+│   ├── src/
+│   │   ├── pages/      # Login, Register, Dashboard, etc.
+│   │   ├── App.js
+│   │   └── index.js
+│   └── package.json
+│
+├── backend/           # Express server
+│   ├── middleware/     # Auth middleware
+│   ├── models/         # User schema
+│   ├── routes/         # API routes
+│   ├── server.js
+│   └── package.json
+│
+└── README.md
 ```
 
----
+## Installation
 
-## Steps to Run the Project Locally
+### Backend
 
-### Backend Setup
-
-1. Navigate to backend folder:
-
-```
+```bash
 cd backend
-```
-
-2. Install dependencies:
-
-```
 npm install
-```
 
-3. Create a `.env` file inside the backend folder and add:
-
-```
-MONGO_URI=your_mongodb_connection_string
+# Create .env file
+MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/dbname
 JWT_SECRET=your_secret_key
+PORT=5000
+
+npm start  # Runs on http://localhost:5000
 ```
 
-4. Start the backend server:
+### Frontend
 
-```
-node server.js
-```
-
-Backend will run on:
-
-```
-http://localhost:5000
-```
-
----
-
-### Frontend Setup
-
-1. Navigate to frontend folder:
-
-```
+```bash
 cd frontend
-```
-
-2. Install dependencies:
-
-```
 npm install
+npm start  # Runs on http://localhost:3000
 ```
 
-3. Start the frontend:
+## API Endpoints
 
-```
-npm start
-```
+| Method | Endpoint | Auth |
+|--------|----------|------|
+| POST | `/api/auth/register` | No |
+| POST | `/api/auth/login` | No |
+| GET | `/api/auth/profile` | Yes |
+| PUT | `/api/auth/profile` | Yes |
+| DELETE | `/api/auth/delete` | Yes |
 
-Frontend will run on:
+## Authentication Flow
 
-```
-http://localhost:3000
-```
+1. User registers with email and password
+2. Password is hashed with bcrypt and stored in MongoDB
+3. User logs in and receives a JWT token
+4. Token is stored in localStorage
+5. Authenticated requests include the token in the Authorization header
+6. Protected routes validate the token before granting access
+
+## Security
+
+- Passwords hashed with bcrypt
+- JWT-based authentication
+- Protected route middleware
+- Environment variables for sensitive data  
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| MongoDB connection fails | Verify `.env` connection string and IP whitelist in MongoDB Atlas |
+| JWT token not working | Check localStorage storage and verify JWT_SECRET matches backend |
+| CORS errors | Ensure backend CORS is configured and frontend API URL is correct |
+
+## License
+
+MIT License
 
 ---
 
-## Application Flow
-
-1. User registers with name, email, and password
-2. Password is encrypted and stored in MongoDB
-3. User logs in using email and password
-4. JWT token is generated and stored in localStorage
-5. User is redirected to a protected page displaying “Access Granted”
-6. Authenticated user can update or delete their account
-7. User can log out securely
-
----
-
-## CRUD Operations Implemented
-
-* Create: User Registration
-* Read: Login and Protected Route Access
-* Update: Update User Profile
-* Delete: Delete User Account
-
----
-
-## Conclusion
-
-This project successfully implements a secure User Authentication System using the MERN stack.
-It demonstrates full-stack interaction, encrypted password storage, JWT-based authorization, protected routes, and complete CRUD operations while following all given project constraints.
+**Last Updated:** February 2026
