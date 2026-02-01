@@ -7,13 +7,20 @@ const app = express();
 
 // Middleware
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: ["http://localhost:3000", "https://authkit12.vercel.app"],
+  credentials: true
+}));
 
 // Debug (remove later if you want)
 console.log("MONGO_URI =", process.env.MONGO_URI);
 
 // MongoDB connection
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect(process.env.MONGO_URI, {
+  tls: true,
+  tlsAllowInvalidCertificates: false,
+  serverSelectionTimeoutMS: 5000,
+})
   .then(() => {
     console.log("MongoDB connected");
   })
