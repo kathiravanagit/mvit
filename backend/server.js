@@ -8,7 +8,7 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use(cors({
-  origin: ["http://localhost:3000", "https://authkit12.vercel.app", "https://user-authentication-system-two.vercel.app"],
+  origin: ["http://localhost:3000","https://authkit6.vercel.app"],
   credentials: true
 }));
 
